@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charity Water Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main class="app-shell">
+        <section class="start-screen" id="startScreen" aria-labelledby="gameTitle">
+            <p class="Charity">Charity Water</p>
+            <h1 id="gameTitle">Water Sprint</h1>
+            <p class="instructions">Avoid the obstacles and deliver water to the well!</p>
+            <button class="start-button" id="startButton" type="button">Begin Game</button>
+        </section>
+
+        <section class="game-screen is-hidden" id="gameScreen" aria-label="Water Sprint game">
+            <div class="game-header">
+                <div class="game-title-group">
+                    <span>Water Sprint</span>
+                    <div class="lives" id="lives" aria-label="3 lives remaining"></div>
+                </div>
+                <div class="score-group">
+                    <span>Score: <strong id="score">0</strong></span>
+                    <span>High: <strong id="highScore">0</strong></span>
+                </div>
+            </div>
+            <div class="game-area" id="gameArea" tabindex="0">
+                <div class="cloud cloud-one" aria-hidden="true"></div>
+                <div class="cloud cloud-two" aria-hidden="true"></div>
+                <div class="player" id="player" aria-label="Water droplet"></div>
+                <div class="ground" aria-hidden="true"></div>
+            </div>
+            <p class="game-hint">Press Space to jump</p>
+            <div class="game-over is-hidden" id="gameOver" role="status">
+                <div class="confetti" id="confetti" aria-hidden="true"></div>
+                <h2 id="gameOverTitle">Keep the water moving!</h2>
+                <p id="gameOverText">Your score: 0</p>
+                <button class="start-button" id="restartButton" type="button">Run Again</button>
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
