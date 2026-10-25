@@ -13,6 +13,7 @@
             <h1 id="gameTitle">Water Sprint</h1>
             <p class="instructions">Avoid the obstacles and deliver water to the well!</p>
             <button class="start-button" id="startButton" type="button">Begin Game</button>
+            <p class="charity-link-message">Every drop matters.<br><a id="charityInfoLink" href="https://www.charitywater.org/" target="_blank" rel="noopener noreferrer">Learn how charity: water brings clean water to communities.</a><a class="secondary-link" href="https://www.charitywater.org/donate" target="_blank" rel="noopener noreferrer">Donate to charity: water</a></p>
         </section>
 
         <section class="game-screen is-hidden" id="gameScreen" aria-label="Water Sprint game">
@@ -29,6 +30,7 @@
             <div class="game-area" id="gameArea" tabindex="0">
                 <div class="cloud cloud-one" aria-hidden="true"></div>
                 <div class="cloud cloud-two" aria-hidden="true"></div>
+                <div class="milestone-message is-hidden" id="milestoneMessage" role="status" aria-live="polite">Halfway there!</div>
                 <div class="player" id="player" aria-label="Water droplet"></div>
                 <div class="ground" aria-hidden="true"></div>
             </div>
@@ -38,9 +40,21 @@
                 <h2 id="gameOverTitle">Keep the water moving!</h2>
                 <p id="gameOverText">Your score: 0</p>
                 <button class="start-button" id="restartButton" type="button">Run Again</button>
+                <p class="charity-fact">Fun fact: this game helps spread awareness about the work of charity: water.</p>
+                <a class="charity-link" href="https://www.charitywater.org/" target="_blank" rel="noopener noreferrer">Visit charity: water</a>
             </div>
         </section>
+
+        <section class="completion-screen is-hidden" id="completionScreen" aria-labelledby="completionTitle">
+            <p class="Charity">Charity Water</p>
+            <h2 id="completionTitle">Congratulations!</h2>
+            <p>You made it to the well! You reached 350 points and delivered water.</p>
+            <button class="start-button" id="completionRestartButton" type="button">Run Again</button>
+            <p class="charity-fact">Every run helps spread awareness about the work of charity: water.</p>
+            <a class="charity-link" href="https://www.charitywater.org/" target="_blank" rel="noopener noreferrer">Visit charity: water</a>
+        </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

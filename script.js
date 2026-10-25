@@ -1,9 +1,12 @@
 const startScreen = document.querySelector('#startScreen');
 const gameScreen = document.querySelector('#gameScreen');
+const completionScreen = document.querySelector('#completionScreen');
 const startButton = document.querySelector('#startButton');
 const restartButton = document.querySelector('#restartButton');
+const completionRestartButton = document.querySelector('#completionRestartButton');
 const gameArea = document.querySelector('#gameArea');
 const player = document.querySelector('#player');
+const milestoneMessage = document.querySelector('#milestoneMessage');
 const scoreDisplay = document.querySelector('#score');
 const highScoreDisplay = document.querySelector('#highScore');
 const livesDisplay = document.querySelector('#lives');
@@ -13,12 +16,15 @@ const gameOverText = document.querySelector('#gameOverText');
 const confetti = document.querySelector('#confetti');
 
 const TOTAL_LIVES = 3;
-const FINISH_SCORE = 300;
+const FINISH_SCORE = 350;
+const DIFFICULTY_STEP = 50;
+const SPEED_INCREASE_PER_LEVEL = 0.75;
 let score = 0;
 let highScore = 0;
 let lives = TOTAL_LIVES;
 let gameRunning = false;
 let finishGateCreated = false;
+let difficultyLevel = 0;
 let obstacleTimer;
 let scoreTimer;
 
@@ -29,27 +35,52 @@ function isSmallScreen() {
 function startGame() {
 	startScreen.classList.add('is-hidden');
 	gameScreen.classList.remove('is-hidden');
+	completionScreen.classList.add('is-hidden');
 	gameOverMessage.classList.add('is-hidden');
 	confetti.innerHTML = '';
 	gameOverTitle.textContent = 'Keep the water moving!';
 	gameOverText.textContent = 'Your score: 0';
+	milestoneMessage.classList.add('is-hidden');
 	score = 0;
 	lives = TOTAL_LIVES;
 	finishGateCreated = false;
+	difficultyLevel = 0;
 	scoreDisplay.textContent = score;
 	updateLives();
 	document.querySelectorAll('.obstacle').forEach((obstacle) => obstacle.remove());
 	gameRunning = true;
 	gameArea.focus();
-	const obstacleInterval = isSmallScreen() ? 2400 : 1700;
-	obstacleTimer = setInterval(createObstacle, obstacleInterval);
+	startObstacleTimer();
 	scoreTimer = setInterval(updateScore, 100);
+}
+
+function getObstacleInterval() {
+	const baseInterval = isSmallScreen() ? 2400 : 1700;
+	return Math.max(700, baseInterval - difficultyLevel * 125);
+}
+
+function startObstacleTimer() {
+	obstacleTimer = setInterval(createObstacle, getObstacleInterval());
+}
+
+function updateDifficulty() {
+	const newDifficultyLevel = Math.floor(score / DIFFICULTY_STEP);
+	if (newDifficultyLevel !== difficultyLevel) {
+		difficultyLevel = newDifficultyLevel;
+		clearInterval(obstacleTimer);
+		startObstacleTimer();
+	}
 }
 
 function updateScore() {
 	if (gameRunning) {
 		score = Math.min(score + 1, FINISH_SCORE);
 		scoreDisplay.textContent = score;
+		updateDifficulty();
+		if (score === 150) {
+			milestoneMessage.classList.remove('is-hidden');
+			setTimeout(() => milestoneMessage.classList.add('is-hidden'), 1800);
+		}
 		if (score > highScore) {
 			highScore = score;
 			highScoreDisplay.textContent = highScore;
@@ -89,22 +120,21 @@ function createFinishGate() {
 
 function moveObstacle(obstacle) {
 	let position = gameArea.clientWidth;
-	const obstacleSpeed = isSmallScreen() ? 3 : 5;
+	const baseSpeed = isSmallScreen() ? 3 : 5;
+	const obstacleSpeed = baseSpeed + difficultyLevel * SPEED_INCREASE_PER_LEVEL;
 
 	function move() {
 		if (!gameRunning) return;
 
 		position -= obstacleSpeed;
 		obstacle.style.left = `${position}px`;
+		const isFinishGate = obstacle.classList.contains('finish-well');
+		if (isFinishGate && isHorizontalOverlap(player, obstacle)) {
+			winGame(obstacle);
+			return;
+		}
 		if (isCollision(player, obstacle)) {
-			if (obstacle.classList.contains('finish-well')) {
-				if (player.classList.contains('is-jumping')) {
-					winGame(obstacle);
-				} else {
-					missFinishGate(obstacle);
-				}
-				return;
-			}
+			obstacle.remove();
 			loseLife(obstacle);
 			return;
 		}
@@ -122,6 +152,12 @@ function isCollision(firstElement, secondElement) {
 	const first = firstElement.getBoundingClientRect();
 	const second = secondElement.getBoundingClientRect();
 	return first.left < second.right - 7 && first.right > second.left + 7 && first.top < second.bottom && first.bottom > second.top;
+}
+
+function isHorizontalOverlap(firstElement, secondElement) {
+	const first = firstElement.getBoundingClientRect();
+	const second = secondElement.getBoundingClientRect();
+	return first.left < second.right && first.right > second.left;
 }
 
 function jump() {
@@ -143,7 +179,6 @@ function updateLives() {
 }
 
 function loseLife(obstacle) {
-	obstacle.remove();
 	lives -= 1;
 	updateLives();
 	player.classList.add('is-hit');
@@ -164,22 +199,10 @@ function winGame(obstacle) {
 	gameRunning = false;
 	clearInterval(obstacleTimer);
 	clearInterval(scoreTimer);
-	gameOverTitle.textContent = 'You reached the well!';
-	gameOverText.textContent = `Amazing work! You successfully delivered water to the well!`;
-	gameOverMessage.classList.remove('is-hidden');
-	createConfetti();
-}
-
-function createConfetti() {
-	const colors = ['#ffc907', '#2e9df7', '#159a48', '#f16061', '#ff902a'];
-	for (let piece = 0; piece < 34; piece += 1) {
-		const confettiPiece = document.createElement('span');
-		confettiPiece.className = 'confetti-piece';
-		confettiPiece.style.backgroundColor = colors[piece % colors.length];
-		confettiPiece.style.left = `${Math.random() * 100}%`;
-		confettiPiece.style.animationDelay = `${Math.random() * 0.6}s`;
-		confettiPiece.style.setProperty('--confetti-rotation', `${Math.random() * 360}deg`);
-		confetti.appendChild(confettiPiece);
+	gameScreen.classList.add('is-hidden');
+	completionScreen.classList.remove('is-hidden');
+	if (typeof window.confetti === 'function') {
+		window.confetti({ particleCount: 160, spread: 85, origin: { y: 0.6 } });
 	}
 }
 
@@ -194,6 +217,7 @@ function endGame() {
 
 startButton.addEventListener('click', startGame);
 restartButton.addEventListener('click', startGame);
+completionRestartButton.addEventListener('click', startGame);
 document.addEventListener('keydown', (event) => {
 	if (event.code === 'Space') {
 		event.preventDefault();

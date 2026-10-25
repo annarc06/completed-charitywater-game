@@ -21,6 +21,7 @@ Secondary Colors:
 	--pale-blue: #e9f7ff;
 	--green: #159a48;
 	--white: #ffffff;
+	--font-family: Avenir, Georgia, Arial, sans-serif;
 }
 
 * {
@@ -32,12 +33,12 @@ body {
 	background: linear-gradient(145deg, #f8fcff 0%, #cceeff 100%);
 	color: var(--deep-blue);
 	display: flex;
-	font-family: Georgia, 'Times New Roman', serif;
+	font-family: var(--font-family);
 	justify-content: center;
 	margin: 0;
-	min-height: 100vh;
+	min-height: 100svh;
 	overflow-x: hidden;
-	padding: 24px;
+	padding: clamp(8px, 3vw, 24px);
 }
 
 button {
@@ -52,7 +53,8 @@ button {
 }
 
 .start-screen,
-.game-screen {
+.game-screen,
+.completion-screen {
 	background: var(--white);
 	border: 3px solid var(--deep-blue);
 	border-radius: 12px;
@@ -64,8 +66,40 @@ button {
 
 .start-screen {
 	max-width: 520px;
-	padding: clamp(40px, 9vw, 88px) clamp(24px, 8vw, 80px);
+	padding: clamp(24px, 8vh, 88px) clamp(24px, 8vw, 80px);
 	text-align: center;
+}
+
+.completion-screen {
+	max-width: 520px;
+	padding: clamp(32px, 8vh, 72px) clamp(24px, 8vw, 80px);
+	text-align: center;
+}
+
+.completion-screen h2 {
+	font-size: clamp(1.25rem, 5vw, 2.8rem);
+	line-height: 1;
+	margin: 0 0 18px;
+	white-space: nowrap;
+}
+
+.completion-screen p:not(.Charity):not(.charity-fact) {
+	color: #46627b;
+	line-height: 1.5;
+	margin-bottom: 24px;
+}
+
+.completion-screen .start-button {
+	display: block;
+	margin: 0 auto 24px;
+}
+
+.completion-screen .charity-fact {
+	margin: 0 12px 14px;
+}
+
+.completion-screen .charity-link {
+	margin: 0 12px;
 }
 
 .Charity {
@@ -92,10 +126,33 @@ h1 {
 
 .instructions {
 	color: #46627b;
-	font-family: Arial, sans-serif;
 	line-height: 1.5;
 	margin-bottom: 32px;
-  padding-top: 15px;
+	padding-top: 15px;
+}
+
+.charity-link-message,
+.charity-fact {
+	color: #46627b;
+	font-size: 0.9rem;
+	line-height: 1.5;
+}
+
+.charity-link-message { margin: 24px 0 0; }
+
+a {
+	color: var(--deep-blue);
+	font-weight: bold;
+}
+
+.secondary-link {
+	display: block;
+	margin-top: 8px;
+}
+
+#charityInfoLink {
+	display: inline-block;
+	margin-top: 10px;
 }
 
 .start-button {
@@ -103,7 +160,6 @@ h1 {
 	border: 2px solid var(--deep-blue);
 	border-radius: 6px;
 	color: var(--deep-blue);
-	font-family: Arial, sans-serif;
 	font-weight: 800;
 	padding: 14px 24px;
 	transition: transform 150ms ease, box-shadow 150ms ease;
@@ -126,7 +182,7 @@ h1 {
 
 .game-header,
 .game-hint {
-	font-family: Arial, sans-serif;
+	font-family: var(--font-family);
 }
 
 .game-header {
@@ -178,6 +234,22 @@ h1 {
 	height: clamp(260px, 48vw, 390px);
 	overflow: hidden;
 	position: relative;
+}
+
+.milestone-message {
+	background: var(--yellow);
+	border: 2px solid var(--deep-blue);
+	border-radius: 6px;
+	color: var(--deep-blue);
+	font-size: clamp(1rem, 3vw, 1.4rem);
+	font-weight: bold;
+	left: 50%;
+	padding: 10px 18px;
+	position: absolute;
+	top: 18%;
+	transform: translateX(-50%);
+	white-space: nowrap;
+	z-index: 3;
 }
 
 .ground {
@@ -348,7 +420,24 @@ h1 {
 }
 
 .game-over h2 { font-size: 1.4rem; margin-bottom: 10px; }
-.game-over p { font-family: Arial, sans-serif; }
+.game-over p { font-family: var(--font-family); }
+
+.game-over .start-button { margin-bottom: 20px; }
+
+.charity-fact { margin: 0 12px 14px; }
+
+.charity-link {
+	display: inline-block;
+	margin: 0 12px 4px;
+}
+
+@media (max-height: 650px) {
+	.start-screen { padding-bottom: clamp(16px, 4vh, 36px); padding-top: clamp(16px, 4vh, 36px); }
+	.Charity { margin-bottom: 8px; }
+	h1 { font-size: clamp(2.2rem, 9vw, 4rem); margin-bottom: 12px; }
+	.instructions { margin-bottom: 18px; padding-top: 4px; }
+	.charity-link-message { margin-top: 14px; }
+}
 
 @media (max-width: 480px) {
 	body { padding: 14px; }
